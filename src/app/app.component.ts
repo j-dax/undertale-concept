@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-type Voice = {
+interface Voice {
   name: string
   files: string[]
 };
@@ -29,7 +29,6 @@ type Voice = {
 export class AppComponent {
   title = 'Voice Emulator';
 
-  DELAY = 100;
   voicesDirectory = "wav/"
   voices: Voice[] = [
     {
@@ -112,7 +111,7 @@ export class AppComponent {
     const vowels = 'aeiouy';
     // trim final e, often these are silent: sane vs committee
     if (word.endsWith('e')) word = word.substring(0, word.length - 1);
-    for (let char of word) {
+    for (const char of word) {
       // each digit will count as one syllable
       if (char >= '0' && char <= '9') wordSyllables++;
       // Add one syllable for each group of consecutive vowels
@@ -127,20 +126,27 @@ export class AppComponent {
   }
 
   async playSound() {
-    let syllables = this.textValue.split(' ').map(word => this.countSyllables(word));
-    let numSyllables = syllables.reduce((a, b) => a + b, 0);
-    // TODO: debug and learn
+    // TODO: expose these values and add some randomness
+    const betweenSyllableDelay = 100;
+    const betweenWordDelay = 150;
+
+    const syllables = this.textValue.split(' ').map(word => this.countSyllables(word));
+    const numSyllables = syllables.reduce((a, b) => a + b, 0);
     console.info(`Now playing ${this.selectedVoice.name} ` + numSyllables + " times");
 
-    let buffer = new Int8Array(numSyllables);
+    const buffer = new Int8Array(numSyllables);
     window.crypto.getRandomValues(buffer);
+    let bufferIndex = 0;
 
-    for (let n of buffer) {
-      let selectedFile = this.selectedVoice.files[Math.abs(n) % this.selectedVoice.files.length];
-      let audio = new Audio(this.voicesDirectory + selectedFile);
-      audio.load();
-      await audio.play();
-      await new Promise((res) => setTimeout(res, this.DELAY));
-    };
+    for (const numSyllablesInWord of syllables) {
+      for (let _ = 0; _ < numSyllablesInWord; _++) {
+        const selectedFile = this.selectedVoice.files[Math.abs(buffer[bufferIndex++]) % this.selectedVoice.files.length];
+        const audio = new Audio(this.voicesDirectory + selectedFile);
+        audio.load();
+        await audio.play();
+        await new Promise((res) => setTimeout(res, betweenSyllableDelay));
+      }
+      await new Promise((res) => setTimeout(res, betweenWordDelay));
+    }
   }
 }
