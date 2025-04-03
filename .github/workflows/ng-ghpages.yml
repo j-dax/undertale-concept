@@ -1,0 +1,29 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+    - "main"
+    - "release-*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      # Allow write permission to GITHUB_TOKEN to commit to deploy branch.
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy Angular
+        uses: AhsanAyaz/angular-deploy-gh-pages-actions@v1.4.0
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          build_configuration: production
+          base_href: /undertale-concept
+          # ng build will write to ./dist/... in this branch
+          deploy_branch: gh-pages
+          angular_dist_build_folder: dist/undertale-concept\
+          run_lint: true
+          skip_failure: false

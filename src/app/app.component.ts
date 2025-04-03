@@ -110,8 +110,7 @@ export class AppComponent {
     let isVowelChain = false;
     let wordSyllables = 0;
     const vowels = 'aeiouy';
-    // sane vs committee
-    // trim final e, often these are silent
+    // trim final e, often these are silent: sane vs committee
     if (word.endsWith('e')) word = word.substring(0, word.length - 1);
     for (let char of word) {
       // each digit will count as one syllable
