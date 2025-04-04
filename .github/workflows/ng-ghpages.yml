@@ -24,6 +24,6 @@ jobs:
           base_href: /undertale-concept
           # ng build will write to ./dist/... in this branch
           deploy_branch: gh-pages
-          angular_dist_build_folder: dist/undertale-concept\
+          angular_dist_build_folder: dist/undertale-concept
           run_lint: true
           skip_failure: false
