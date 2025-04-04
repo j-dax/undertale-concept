@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:undertale": "node dist/undertale/server/server.mjs",
+    "serve:ssr:undertale": "node dist/undertale-concept/server/server.mjs",
     "lint": "ng lint"
   },
   "private": true,
